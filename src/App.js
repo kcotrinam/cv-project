@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import FormGeneral from './components/FormGeneral';
 import FormStudy from './components/FormStudies'
 import InfoDisplay from './components/InfoDisplay'
+import FormWork from './components/FormWork';
 
 const App = () => {
   const [tempInfo, setTempInfo] = useState({
@@ -11,7 +12,12 @@ const App = () => {
     phone: '',
     schoolName: '',
     title: '',
-    dateOfStudy: ''
+    dateOfStudy: '',
+    companyName: '',
+    positionTitle: '',
+    tasks: '',
+    dateFrom: '',
+    dateUntil: ''
   })
 
   const [info, setInfo] = useState({
@@ -25,6 +31,15 @@ const App = () => {
     schoolName: '',
     title: '',
     dateOfStudy: '',
+    saved: false
+  })
+
+  const [workInfo, setWorkInfo] = useState({
+    companyName: '',
+    positionTitle: '',
+    tasks: '',
+    dateFrom: '',
+    dateUntil: '',
     saved: false
   })
 
@@ -45,13 +60,35 @@ const App = () => {
     })
 
     setTempInfo({
+      ...tempInfo,
       schoolName: '',
       title: '',
       dateOfStudy: ''
     })
   }
+  
+  const handleSubmitWork = (evt) => {
+    evt.preventDefault();
+    setWorkInfo({
+      companyName: tempInfo.companyName,
+      positionTitle: tempInfo.positionTitle,
+      tasks: tempInfo.tasks,
+      dateFrom: tempInfo.dateFrom,
+      dateUntil: tempInfo.dateUntil,
+      saved: true
+    })
 
-  const handleSubmit = (evt) => {
+    setTempInfo({
+      ...tempInfo,
+      companyName: '',
+      positionTitle: '',
+      tasks: '',
+      dateFrom: '',
+      dateUntil: ''
+    })
+  }
+
+  const handleGeneralSubmit = (evt) => {
     evt.preventDefault();
     setInfo({
       name: tempInfo.name,
@@ -61,6 +98,7 @@ const App = () => {
     })
 
     setTempInfo({
+      ...tempInfo,
       name: '',
       email: '',
       phone: ''
@@ -70,26 +108,30 @@ const App = () => {
   return (
     <>
       {info.saved ?
+        <div>
           <InfoDisplay
             title="General Information"
             info1={info.name}
             info2={info.email}
             info3={info.phone}/>
+        </div>
         :
           <FormGeneral name={tempInfo.name}
           email={tempInfo.email}
           phone={tempInfo.phone}
           handleChange={handleChange}
-          submitHandler={handleSubmit}
+          submitHandler={handleGeneralSubmit}
           status={info.saved}
           />
       }
       {
         studiesInfo.saved ?
-          <InfoDisplay title="Studies Information"
-            info1={studiesInfo.schoolName}
-            info2={studiesInfo.title}
-            info3={studiesInfo.dateOfStudy}/>
+          <div>
+            <InfoDisplay title="Studies Information"
+              info1={studiesInfo.schoolName}
+              info2={studiesInfo.title}
+              info3={studiesInfo.dateOfStudy}/>
+          </div>
         :
           <FormStudy 
             schoolName={tempInfo.schoolName}
@@ -97,9 +139,30 @@ const App = () => {
             dateOfStudy={tempInfo.dateOfStudy}
             changeHandler={handleChange}
             submitHandler={submitStudies}
-            />
-      }
-        
+          />
+        }
+
+        { workInfo.saved ?
+          <div>
+            <InfoDisplay
+              info1={workInfo.companyName}
+              info2={workInfo.positionTitle}
+              info3={workInfo.tasks}
+              info4={workInfo.dateFrom}
+              info5={workInfo.dateUntil}
+              />
+          </div>
+          :
+          <FormWork
+            companyName={tempInfo.companyName}
+            positionTitle={tempInfo.positionTitle}
+            tasks={tempInfo.tasks}
+            dateFrom={tempInfo.dateFrom}
+            dateUntil={tempInfo.dateUntil}
+            changeHandler={handleChange}
+            submitHandler={handleSubmitWork}
+          />
+        }
     </>
   );
 }
